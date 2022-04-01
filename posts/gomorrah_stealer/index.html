@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Gomorrah Stealer // My Research Blog</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.96.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Amit Nizri" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://amitniz.github.io/css/main.min.c748a5c8a7a474d985f81b70a8c535c642ce7e031ec174a8ec69722dd523e787.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Gomorrah Stealer"/>
+<meta name="twitter:description" content="A new version of cracked Gomorrah builder was leaked today so I thought this might be a good subject for my first publish on this blog.
+sha1:31da10dc30dc6a785fa71e9433feffef7e58e8a6
+Some Background Gomorrah is a stealer that made its first appearance around March 2020. its written in a .NET language and almost doesn&rsquo;t use any obfuscation or anti-debugging techniques, thus making it fairly easy to reverse and analyze it.
+First Look After executing the builder we can see a simple window with a textbox and one button."/>
+
+    <meta property="og:title" content="Gomorrah Stealer" />
+<meta property="og:description" content="A new version of cracked Gomorrah builder was leaked today so I thought this might be a good subject for my first publish on this blog.
+sha1:31da10dc30dc6a785fa71e9433feffef7e58e8a6
+Some Background Gomorrah is a stealer that made its first appearance around March 2020. its written in a .NET language and almost doesn&rsquo;t use any obfuscation or anti-debugging techniques, thus making it fairly easy to reverse and analyze it.
+First Look After executing the builder we can see a simple window with a textbox and one button." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://amitniz.github.io/posts/gomorrah_stealer/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-03-31T23:46:38+03:00" />
+<meta property="article:modified_time" content="2022-03-31T23:46:38+03:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://amitniz.github.io/"><img class="app-header-avatar" src="/avatar.png" alt="Amit Nizri" /></a>
+      <h1>My Research Blog</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/about/">About</a>
+      </nav>
+      <p>Malware Research • CVEs • Reverse Engineering • CTFs Solutions</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/AmitNiz" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://twitter.com/amit_niz" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-twitter">
+  <title>Twitter</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+</svg>
+          </a>
+        
+          <a href="https://linkedin.com/in/amit-nizri/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Gomorrah Stealer</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Mar 31, 2022
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          4 min read
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <p>A new version of cracked Gomorrah builder was leaked today
+so I thought this might be a good subject for my first publish on this blog.</p>
+<p><strong>sha1:31da10dc30dc6a785fa71e9433feffef7e58e8a6</strong></p>
+<h2 id="some-background">Some Background</h2>
+<p>Gomorrah is a stealer that made its first appearance around March 2020.
+its written in a .NET language and almost doesn&rsquo;t use any obfuscation or anti-debugging techniques,
+thus making it fairly easy to reverse and analyze it.</p>
+<h2 id="first-look">First Look</h2>
+<p>After executing the builder we can see a simple
+window with a textbox and one button.</p>
+<p>To generate a sample of Gomorrah all you need to do is
+to enter a C2 domain for the stealer to communicate with and press
+on the Build button.</p>
+<p><img src="/builder.png" alt="builder image"></p>
+<h2 id="packed-files">Packed Files:</h2>
+<p>The PE contains two files that he drops later on.</p>
+<ul>
+<li>
+<p>Zip,	contains a code that checks the system IP and location (using ip-api.com) and
+sends it to the C2.</p>
+<p><strong>sha1:a9e6f4ae24abf76966d7db03af9c802e83760143</strong></p>
+</li>
+<li>
+<p>Newtonsoft.Json.dll,goodware, JSON serialization library.</p>
+<p><strong>sha1:dba5d60848a7c24ce837225709d9e23690bb5cb3</strong></p>
+</li>
+</ul>
+<h2 id="further-investigation">Further Investigation</h2>
+<h3 id="how-it-stores-and-reads-the-c2-domain">How it stores and reads the C2 domain.</h3>
+<p>A quick look at the hexdump of the sample
+will reveal the C2 domain at the end of the file,
+wrapped with &lsquo;|FS|&rsquo; arround it.
+As it seems all that the builder does is concating the C2 domain to the
+end of the stealer file.</p>
+<p><img src="/hexdump.png" alt="hexdump"></p>
+<blockquote>
+<p><em><strong>Note:</strong> Because the domain is stored out of the bounds of the file as it appears
+in the PE header, most disassemblers wouldn&rsquo;t read it and you wouldn&rsquo;t be able
+to see it when using them.</em></p>
+</blockquote>
+<p>Looking at the decompiled code, using dnspy, we can see how the malware loads
+the domain by reading its file into the string &lsquo;<em>expression</em>&rsquo; and then extract the url
+by splitting the string with &lsquo;|FS|&rsquo; as delimeter.</p>
+<p><img src="/c2_decoding.png" alt="decoding c2"></p>
+<blockquote>
+<p><em>It is also worth mentioning that although the stealer has to open and read itself inorder to get the domain, and this is probably the reason of doing so, that action also performs as an anti-debugger technique as it uses OpenShare.default mode (LockReadWrite) when openning itself.
+This request to open the file while debugging is going to fail because the file is already opened by our debugger.
+So inorder to pass it make sure that you change the OpenShare mode</em></p>
+</blockquote>
+<p><img src="/antidebug.png" alt="OpenShare antiDebug"></p>
+<h2 id="abilities">Abilities</h2>
+<p>I&rsquo;m not going to describe how every ability is implemented
+but I&rsquo;ll try to cover as much as I can and show you how to find where they are implemented.</p>
+<p><em>The way that Gomorrah achieves those abilities is really not that complex and fairly easy to understand
+just from looking at the code.</em></p>
+<p><strong>Gomorrah stealing abilities:</strong></p>
+<ul>
+<li>Credit cards stored in browsers.</li>
+<li>Users passwords from browsers.</li>
+<li>Cookies.</li>
+<li>Browser history.</li>
+<li>txt and config files from the desktop.</li>
+<li>Data from crypto wallets.</li>
+<li>NordVPN and ProtonVPN config files.</li>
+<li>Filezilla credentials.</li>
+<li>Taking a sceenshot.</li>
+<li>System info.</li>
+<li>Outlook passwords.</li>
+<li>download and run files.</li>
+</ul>
+<p><strong>Targeted browsers:</strong></p>
+<ul>
+<li>Chrome</li>
+<li>Opera</li>
+<li>Yandex</li>
+<li>360 Browser</li>
+<li>Comodo Dragon</li>
+<li>CoolNovo</li>
+<li>SRWare Iron</li>
+<li>Torch Browser</li>
+<li>Brave Browser</li>
+<li>Iridium Browser</li>
+<li>7Star</li>
+<li>Amigo</li>
+<li>CentBrowser</li>
+<li>Chedot</li>
+<li>CocCoc</li>
+<li>Elements Browser</li>
+<li>Epic Privacy Browser</li>
+<li>Kometa</li>
+<li>Orbitum</li>
+<li>Sputnik</li>
+<li>uCozMedia</li>
+<li>Vivaldi</li>
+<li>Sleipnir 6</li>
+<li>Citrio</li>
+<li>Coowon</li>
+<li>Liebao Browser</li>
+<li>QIP Surf</li>
+<li>Edge Chromium</li>
+</ul>
+<p><strong>snapshot:</strong></p>
+<p><img src="/abilities.png" alt="abilities"></p>
+<h2 id="communication">Communication</h2>
+<p>Gomorrah communication is over HTTP.</p>
+<p>It sends the stolen data at execution and calls periodically to &lsquo;<em>task_checker_tick</em>&rsquo;
+which sends a GET request to <em>{c2_domain}/task.php/hwid={the_victims_hwid}</em></p>
+<p><img src="/task_checker.png" alt="task checker"></p>
+<p>The remote operator is able to supply an update to Gommorah or provide
+a url from downloading and executing another file.</p>
+<h2 id="collecting-data">Collecting data</h2>
+<p>Its seems that Gommorah will only collect data in the moment of execution,
+and because it uses a persistence mechanism that means that it will collect data everytime that the user is logged in.</p>
+<p>The data will be stored in log files and will be sent to the C2 server
+shortly after.</p>
+<p><img src="/check_sender_tick.png" alt="check sender">
+<img src="/upload_logs.png" alt="upload logs"></p>
+<h2 id="persistence">Persistence</h2>
+<p>Short time after the stealer is being executed the function <em>install_server</em> will be called.</p>
+<p>The function moves the executable to %AppData%\Local\Temp
+and sets a special registry key which will be executed everytime the user is logged in.</p>
+<p>inorder to attract less attention it stores the execution command under the value &lsquo;Windows Defender Updater&rsquo;.</p>
+<p><img src="/install_server.png" alt="install server"></p>
+<p><strong>Registry Key:</strong></p>
+<pre><code>HKCU\Software\Microsoft\Windows\CurrentVersion\Run
+</code></pre>
+<p><img src="/regedit.png" alt="regedit"></p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>
