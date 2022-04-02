@@ -129,7 +129,7 @@ sends it to the C2.</p>
 </li>
 </ul>
 <h2 id="further-investigation">Further Investigation</h2>
-<h3 id="how-it-stores-and-reads-the-c2-domain">How it stores and reads the C2 domain.</h3>
+<h3 id="how-it-stores-and-reads-the-c2-domain">How it stores and reads the C2 domain</h3>
 <p>A quick look at the hexdump of the sample
 will reveal the C2 domain at the end of the file,
 wrapped with &lsquo;|FS|&rsquo; arround it.
@@ -151,7 +151,7 @@ This request to open the file while debugging is going to fail because the file 
 So inorder to pass it make sure that you change the OpenShare mode</em></p>
 </blockquote>
 <p><img src="/antidebug.png" alt="OpenShare antiDebug"></p>
-<h2 id="abilities">Abilities</h2>
+<h3 id="abilities">Abilities</h3>
 <p>I&rsquo;m not going to describe how every ability is implemented
 but I&rsquo;ll try to cover as much as I can and show you how to find where they are implemented.</p>
 <p><em>The way that Gomorrah achieves those abilities is really not that complex and fairly easy to understand
@@ -204,21 +204,21 @@ just from looking at the code.</em></p>
 </ul>
 <p><strong>snapshot:</strong></p>
 <p><img src="/abilities.png" alt="abilities"></p>
-<h2 id="communication">Communication</h2>
+<h3 id="communication">Communication</h3>
 <p>Gomorrah communication is over HTTP.</p>
 <p>It sends the stolen data at execution and calls periodically to &lsquo;<em>task_checker_tick</em>&rsquo;
 which sends a GET request to <em>{c2_domain}/task.php/hwid={the_victims_hwid}</em></p>
 <p><img src="/task_checker.png" alt="task checker"></p>
 <p>The remote operator is able to supply an update to Gommorah or provide
 a url from downloading and executing another file.</p>
-<h2 id="collecting-data">Collecting data</h2>
+<h3 id="collecting-data">Collecting data</h3>
 <p>Its seems that Gommorah will only collect data in the moment of execution,
 and because it uses a persistence mechanism that means that it will collect data everytime that the user is logged in.</p>
-<p>The data will be stored in log files and will be sent to the C2 server
+<p>The data is stored in log files and being sent to the C2 server
 shortly after.</p>
 <p><img src="/check_sender_tick.png" alt="check sender">
 <img src="/upload_logs.png" alt="upload logs"></p>
-<h2 id="persistence">Persistence</h2>
+<h3 id="persistence">Persistence</h3>
 <p>Short time after the stealer is being executed the function <em>install_server</em> will be called.</p>
 <p>The function moves the executable to %AppData%\Local\Temp
 and sets a special registry key which will be executed everytime the user is logged in.</p>
