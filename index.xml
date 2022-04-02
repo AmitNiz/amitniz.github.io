@@ -24,7 +24,7 @@ disclaimer: Everything I post on this blog is done on my free time. This blog is
       <pubDate>Thu, 31 Mar 2022 23:46:38 +0300</pubDate>
       
       <guid>https://amitniz.github.io/posts/gomorrah_stealer/</guid>
-      <description>A new version of cracked Gomorrah builder was leaked today so I thought this might be a good subject for my first publish on this blog.
+      <description>A new version of cracked Gomorrah builder was leaked today so I thought this might be a good subject for my first publication on this blog.
 sha1:31da10dc30dc6a785fa71e9433feffef7e58e8a6
 Some Background Gomorrah is a stealer that made its first appearance around March 2020. its written in a .NET language and almost doesn&amp;rsquo;t use any obfuscation or anti-debugging techniques, thus making it fairly easy to reverse and analyze it.
 First Look After executing the builder we can see a simple window with a textbox and one button.</description>
