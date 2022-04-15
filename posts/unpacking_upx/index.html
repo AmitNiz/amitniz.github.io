@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Unpacking UPX // My Research Blog</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.96.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Amit Nizri" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://amitniz.github.io/css/main.min.c748a5c8a7a474d985f81b70a8c535c642ce7e031ec174a8ec69722dd523e787.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Unpacking UPX"/>
+<meta name="twitter:description" content="In this article I will cover how the UPX packer works and how to manually unpack it.
+For the purpose of demonstration I will unpack a sample of the infamous conti ransomware, which we see a lot in the wild these days, and is using UPX packer.
+What is it UPX? UPX (the Ultimate Packer for Executables) is an open-source packer, based on the UCL compression algorithm. It is a very common and well known packer, which is also considered to be an easy one to unpack."/>
+
+    <meta property="og:title" content="Unpacking UPX" />
+<meta property="og:description" content="In this article I will cover how the UPX packer works and how to manually unpack it.
+For the purpose of demonstration I will unpack a sample of the infamous conti ransomware, which we see a lot in the wild these days, and is using UPX packer.
+What is it UPX? UPX (the Ultimate Packer for Executables) is an open-source packer, based on the UCL compression algorithm. It is a very common and well known packer, which is also considered to be an easy one to unpack." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://amitniz.github.io/posts/unpacking_upx/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-04-15T12:19:38+03:00" />
+<meta property="article:modified_time" content="2022-04-15T12:19:38+03:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://amitniz.github.io/"><img class="app-header-avatar" src="/avatar.png" alt="Amit Nizri" /></a>
+      <h1>My Research Blog</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/about/">About</a>
+      </nav>
+      <p>Malware Research • CVEs • Reverse Engineering • CTFs Solutions</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/AmitNiz" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://twitter.com/amit_niz" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-twitter">
+  <title>Twitter</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+</svg>
+          </a>
+        
+          <a href="https://linkedin.com/in/amit-nizri/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Unpacking UPX</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Apr 15, 2022
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          5 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://amitniz.github.io/tags/malware/">Malware</a>
+              <a class="tag" href="https://amitniz.github.io/tags/reverse_engineering/">Reverse_Engineering</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <p>In this article I will cover how the UPX packer works and how to manually
+unpack it.</p>
+<p>For the purpose of demonstration I will unpack a sample of the infamous <em><strong>conti ransomware</strong></em>, which we see a lot in the wild these days, and is using UPX packer.</p>
+<h2 id="what-is-it-upx">What is it UPX?</h2>
+<p>UPX (the Ultimate Packer for Executables) is an open-source packer,
+based on the UCL compression algorithm.
+It is a very common and well known packer, which is also considered to be an easy one to unpack.</p>
+<p>Although UPX doesn&rsquo;t use sophisticated techniques to secure its
+packed executables, like other known packers/protectors (such as
+Themida, VMProtect, Andromeda, Obsidium, and so on..),
+And even though there are plenty of automatic tools for unpacking it,
+I think that it&rsquo;s a great practice to analyze it and learn how to unpack it manually.</p>
+<h2 id="identifying-upx-packed-executable">Identifying UPX Packed Executable</h2>
+<p>The first thing we need to do before unpacking an executable is to determine if the file is packed. Additionally, we can continue and try to identify the packer, which in case of dealing with more advanced packers can help us a lot at the unpacking process.</p>
+<p><strong>So how do we do it?</strong></p>
+<p>UPX is common enough that most PE analyzing tools, such as <em>PEid</em> or <em>DIE</em> (detect it easy),
+will detect it.</p>
+<p><em>Example from using DIE:</em></p>
+<p><img src="/die.png" alt="upx dectected with DIE"></p>
+<p>But lets assume that we can&rsquo;t use those tools or that they don&rsquo;t detect our packer.</p>
+<p>What else can we do?</p>
+<p>We can look for one of the following indicators.</p>
+<p><strong>Looking at the import table</strong> - Small import table can be a good indicator for a packed executable.
+Packers most likely will pack the program with its import table, which means that the import
+table that we see is probably the packers import table and it tends to be smaller than average.</p>
+<p><img src="/binary_ninja_import_table.png" alt="import table - binary ninja"></p>
+<p><em>In the picture above we see the import table of our sample. Just a few imports..</em></p>
+<p><strong>Looking at the sections</strong> - Another common indicator is the names of the executable sections. Most common executables  will probably have the following known sections created by the compiler: <strong>.text</strong>, <strong>.data</strong>, <strong>.rdata</strong>..
+but when looking at a packed file we might see other sections and even less in number.</p>
+<p>Our sample sections:
+<img src="/binary_ninja_sections.png" alt="sections - binary ninja"></p>
+<p>You can see that our sample does not have any of the known sections,
+instead it has <strong>UPX0</strong>, <strong>UPX1</strong> and <strong>.rsrc</strong> .</p>
+<p>In our case we can also infer from the sections names that we are looking at a UPX packed executable.</p>
+<p><strong>Checking the entropy</strong> - Encrypted/packed data tends to have a higher entropy than a binary code. Therefore we can check the sections entropy to identify encrypted or packed sections.</p>
+<p><em>Most disassemblers and PE analyzing tools have this feature.</em></p>
+<h1 id="unpacking">Unpacking</h1>
+<p>So by now we know that we are dealing with a packed file. The next step is
+to debug it to a point that the unpacked data is loaded in memory, and to find the original entrypoint.</p>
+<p><strong>NOTE:</strong> <em>This might not be an easy task when dealing with some other packers, but this is a good attempt to begin with.</em></p>
+<h3 id="before-we-start">Before We Start</h3>
+<p>It is very important that before we start debugging, we make sure that the ASLR mechanism is disabled. Without ASLR disabled our dumping method will fail.</p>
+<p>One way to do this is by using a PE editor (i.e CFF explorer),
+and modify the value of <em>DllCharacteristics</em>. We want to disable the bit of the flag <strong>DLL can move</strong>.</p>
+<p><img src="/cff_dllchar.png" alt="cff dll characteristics"></p>
+<p><img src="/aslr_checkbox.png" alt="dll can move"></p>
+<h3 id="debugging">Debugging</h3>
+<p>Let&rsquo;s open our sample with a debugger and stop at the entrypoint.</p>
+<p><em>For this demonstration I will use x64dbg.</em></p>
+<p><img src="/pushad.png" alt="x64dbg pushad"></p>
+<p>As you can see the first instruction is PUSHAD (Push All Double), which is pretty common when dealing with packers. The PUSHA instruction stores all general registers values on the stack. That&rsquo;s how the packer will restore the registers state after unpacking.</p>
+<p>Now, we can continue by looking after the POPAD instruction, which ideally should be near the jump to the unpacked code.
+But before doing so, lets take a deeper look at the packer code and try to understand it.</p>
+<p>Looking at the memory map we can see that the entrypoint is located in the <strong>UPX1</strong> section.</p>
+<p><img src="/x64_memmap.png" alt="memory map UPX1"></p>
+<p>It seems that the decompression code stored in this section.</p>
+<p>Lets take a look at UPX0:
+<img src="/empty_upx0.png" alt="UPX0">
+It&rsquo;s empty!</p>
+<p>Ok, so this is probably where our unpacked code will be stored.
+To confirm this, we can set a memory/hardware breakpoint on this section and see.</p>
+<p><img src="/starting_unpacking.png" alt="unpacking loop"></p>
+<p>The breakpoint worked, and it looks like we stopped at some loop that writes code into the empty section.</p>
+<p>Our assumption was correct!</p>
+<p>We now have a better understanding of the purpose of those sections.</p>
+<p>Now, all we have to do is to find our OEP (original entrypoint).</p>
+<p>We can achieve this by setting a breakpoint on <strong>UPX0</strong> that will stop at execution,
+looking for a jump near to a <strong>POPAD</strong> instruction and many other ways..</p>
+<p>UPX1 is quite a small section so by looking at its CFG we can find immediately a
+<strong>POPAD</strong> instruction near a jump to an uninitialized area.</p>
+<p><img src="/cfg_upx1.png" alt="cfg upx1"></p>
+<p>That&rsquo;s it! That&rsquo;s the jump to our OEP.</p>
+<p>Now, let&rsquo;s put a breakpoint at our OEP.</p>
+<p><img src="/unpacked_ep.png" alt="unpacked entrypoint"></p>
+<h2 id="dumping-the-memory">Dumping the memory</h2>
+<p>Now that the unpacked data is loaded into memory and that we located our OEP,
+we can create a memory dump and create a new, unpacked PE of it.</p>
+<p><em>For this purpose we can use Scylla which is included in x64dbg.</em></p>
+<h3 id="instructions">Instructions:</h3>
+<p>Launch Scylla and set the OEP.</p>
+<p><img src="/scylla0.png" alt="Scylla window"></p>
+<p>Next, press on <strong>IAT Autosearch</strong> and then on <strong>Get Imports</strong>.</p>
+<p>Now, you should see the imports for the dump.
+Make sure that they are all valid.</p>
+<p>You might need to remove invalid imports as such:
+<img src="/scylla_imports.png" alt="Scylla imports">
+<img src="/scylla_delete.png" alt="Scylla fix imports"></p>
+<p>Lastly, create a dump by pressing the <strong>Dump</strong> button, and then press on <strong>Fix Dump</strong> and choose your dump file.</p>
+<p>You should see something like this:</p>
+<p><img src="/scylla_log.png" alt="Scylla log"></p>
+<p>Done! We now have an unpacked version of our sample.</p>
+<p><img src="/die_on_dump.png" alt="die check on unpacked">
+<img src="/imports_on_dump.png" alt="unpacked import table"></p>
+<h3 id="references">References:</h3>
+<ul>
+<li>
+<p>UPX official website - <a href="https://upx.github.io/">https://upx.github.io/</a></p>
+</li>
+<li>
+<p>UPX wiki page - <a href="https://en.wikipedia.org/wiki/UPX">https://en.wikipedia.org/wiki/UPX</a></p>
+</li>
+</ul>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>
