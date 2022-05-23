@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>How Emotet Downloader Hide Its Payload // My Research Blog</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.99.1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Amit Nizri" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://amitniz.github.io/css/main.min.b433ed0ba7b8a622f56ff6d2ccbf163212b5c5012547f3c0a142c748dcbb5a97.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="How Emotet Downloader Hide Its Payload"/>
+<meta name="twitter:description" content="This week I came a cross a new version of Emotet. As I was trying to figure how the attack chain accures, I found this malicious excel document that is being used as a downloader of the sample.
+So I download the maldoc and run olevba to dump the macros, but nothing was found.
+Interesting.. Ok, Let&rsquo;s find out what is going on.
+SHA1: 3fabbc9d0dbf064dbe1ca4ca8bed8324febc7ca9 
+Some Background Emotet is an advanced, self-propagating and modular Trojan That made its first appearance at 2014."/>
+
+    <meta property="og:title" content="How Emotet Downloader Hide Its Payload" />
+<meta property="og:description" content="This week I came a cross a new version of Emotet. As I was trying to figure how the attack chain accures, I found this malicious excel document that is being used as a downloader of the sample.
+So I download the maldoc and run olevba to dump the macros, but nothing was found.
+Interesting.. Ok, Let&rsquo;s find out what is going on.
+SHA1: 3fabbc9d0dbf064dbe1ca4ca8bed8324febc7ca9 
+Some Background Emotet is an advanced, self-propagating and modular Trojan That made its first appearance at 2014." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://amitniz.github.io/posts/investigating_emotet/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-05-21T01:11:25+03:00" />
+<meta property="article:modified_time" content="2022-05-21T01:11:25+03:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://amitniz.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="Amit Nizri" /></a>
+      <h1>My Research Blog</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/about/">About</a>
+      </nav>
+      <p>Malware Research • CVEs • Reverse Engineering • CTFs Solutions</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/AmitNiz" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://twitter.com/amit_niz" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-twitter">
+  <title>Twitter</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+</svg>
+          </a>
+        
+          <a href="https://linkedin.com/in/amit-nizri/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">How Emotet Downloader Hide Its Payload</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          May 21, 2022
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          2 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://amitniz.github.io/tags/maldocs/">Maldocs</a>
+              <a class="tag" href="https://amitniz.github.io/tags/malware/">Malware</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <p>This week I came a cross a new version of Emotet.
+As I was trying to figure how the attack chain accures, I found this
+malicious excel document that is being used as a downloader of the sample.</p>
+<p>So I download the maldoc and run <strong>olevba</strong> to dump the macros, but nothing was found.</p>
+<p>Interesting.. Ok, Let&rsquo;s find out what is going on.</p>
+<p><strong>SHA1:</strong>   <code>3fabbc9d0dbf064dbe1ca4ca8bed8324febc7ca9 </code></p>
+<h2 id="some-background">Some Background</h2>
+<p>Emotet is an advanced, self-propagating and modular Trojan
+That made its first appearance at 2014.
+It spreads itself by sending phishing emails containing malicious documents or links.
+Once a machine is compromized, Emotet steals sensitive and private information and sends it back to a C2 server.
+Recent research also found out that emotet spreads itself via victims email accounts.</p>
+<h2 id="first-look">First look</h2>
+<p>Let&rsquo;s start by looking the Excel file.
+When opened, it seems like an empty file.</p>
+<p>A quick check for hidden sheets will reveal 5 more sheets.</p>
+<p>Those sheets also look empty. Maybe let&rsquo;s try to change the text color.</p>
+<p>There it is.</p>
+<p><img src="/emotet_content1.png" alt="emotet content 1">
+<img src="/emotet_content2.png" alt="emotet content 2"></p>
+<p>Ok.. but where is the payload?
+Lets look at the code window</p>
+<p><img src="/emotet_code_window.png" alt="emotet_code_window"></p>
+<p>Nothing.. well we know that olevba didn&rsquo;t find anything so that makes sense.</p>
+<p>Let&rsquo;s take a closer look at the sheet <strong>EFALGV</strong>.
+It seems empty but if you look closely you could see that the D column is folded.</p>
+<p><img src="/emotet_folded_column.png" alt="emotet_folded_column"></p>
+<p>un fold it and change the text color and.. voila! our payload.
+<img src="/emotet_unfolded_column.png" alt="emotet_unfolded_column"></p>
+<p><img src="/emotet_payload.png" alt="emotet payload">
+<em><strong>Quick Tip</strong>: checking the macro Auto_Open will take us straightly to the payload.</em></p>
+<h2 id="the-payload">The Payload</h2>
+<p>The payload uses XLM4 macros, which means that if you try to extract macros with tools such as olevba you&rsquo;ll find nothing because
+these macros aren&rsquo;t VBA macros, thats also applies to the code window.</p>
+<h3 id="so-whats-going-on-here">So what&rsquo;s going on here</h3>
+<p>This code is creating multiple formulas from the scrambled text we&rsquo;ve seen earlier, and place it in a specific order,
+then it runs the payload.</p>
+<p>We can decode it by replacing the use of the <em>&lsquo;Formula&rsquo;</em> macro with the <em>&lsquo;T&rsquo;</em> macro.
+<img src="/emotet_decoded_payload1.png" alt="emotet decoded payload 1"></p>
+<p>Switch off &lsquo;Show Formula&rsquo; and there it is!</p>
+<p><img src="/emotet_decoded_payload2.png" alt="emotet decoded payload"></p>
+<p>As you can see, the payload tries to download a malicous dll from various websites,
+stores it at <code>..\dan.ocx</code> and then run it with <code>regsvr32 /s</code>.</p>
+<h2 id="iocs">IOCs:</h2>
+<ul>
+<li><code>http[:]//puntamimarlik.com.tr/wp-admin/9IW7L1gKwWOoNQREJ6/</code></li>
+<li><code>https[:]//queaventurasathya.com/licenses/r903sDTMHYLyn8ykMU/</code></li>
+<li><code>https[:]//escuelageneraljosedesanmartin.com/tmp/5vJR7J/</code></li>
+<li><code>https[:]//indianbusinessclub.org/wtzrlyx/Nfisb7Le5JH/</code></li>
+<li><code>https[:]//cartelac.pt/wp-includes/VJMcayYWquGgVAGa/</code></li>
+<li><code>https[:]//axial-ing.fr/old/98WgLPFy5u2Xf/</code></li>
+<li><code>https[:]//luape.es/wp-admin/moJpURVz/</code></li>
+</ul>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>
