@@ -20,7 +20,7 @@ What is Frida? Frida is a binary intrumentation toolkit, that lets you inject JS
     </item>
     
     <item>
-      <title>How Emotet Downloader Hide Its Payload</title>
+      <title>How Emotet Downloader Hides Its Payload</title>
       <link>https://amitniz.github.io/posts/investigating_emotet/</link>
       <pubDate>Sat, 21 May 2022 01:11:25 +0300</pubDate>
       
