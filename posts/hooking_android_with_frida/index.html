@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Hooking Android Applications With Frida // My Research Blog</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.99.1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Amit Nizri" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://amitniz.github.io/css/main.min.b433ed0ba7b8a622f56ff6d2ccbf163212b5c5012547f3c0a142c748dcbb5a97.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Hooking Android Applications With Frida"/>
+<meta name="twitter:description" content="Today I&rsquo;m going to talk about a very powerful binary instrumentation toolkit named Frida,
+And use it to investigate and solve an android crackme app.
+Note: I&rsquo;m going to assume that you already know how to connect to an android device or emulator via adb.
+What is Frida? Frida is a binary intrumentation toolkit, that lets you inject JS code or your own library into native apps on almost every possible platform (Window, MacOs, Linux, IOS, Android and QNX)."/>
+
+    <meta property="og:title" content="Hooking Android Applications With Frida" />
+<meta property="og:description" content="Today I&rsquo;m going to talk about a very powerful binary instrumentation toolkit named Frida,
+And use it to investigate and solve an android crackme app.
+Note: I&rsquo;m going to assume that you already know how to connect to an android device or emulator via adb.
+What is Frida? Frida is a binary intrumentation toolkit, that lets you inject JS code or your own library into native apps on almost every possible platform (Window, MacOs, Linux, IOS, Android and QNX)." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://amitniz.github.io/posts/hooking_android_with_frida/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-05-23T18:23:20+03:00" />
+<meta property="article:modified_time" content="2022-05-23T18:23:20+03:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://amitniz.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="Amit Nizri" /></a>
+      <h1>My Research Blog</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/about/">About</a>
+      </nav>
+      <p>Malware Research • CVEs • Reverse Engineering • CTFs Solutions</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/AmitNiz" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://twitter.com/amit_niz" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-twitter">
+  <title>Twitter</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+</svg>
+          </a>
+        
+          <a href="https://linkedin.com/in/amit-nizri/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Hooking Android Applications With Frida</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          May 23, 2022
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          6 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://amitniz.github.io/tags/frida/">frida</a>
+              <a class="tag" href="https://amitniz.github.io/tags/reverse_engineering/">reverse_engineering</a>
+              <a class="tag" href="https://amitniz.github.io/tags/android/">android</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <p>Today I&rsquo;m going to talk about a very powerful binary instrumentation toolkit named Frida,<br>
+And use it to investigate and solve an android crackme app.</p>
+<p><strong>Note:</strong> <em>I&rsquo;m going to assume that you already know how to connect to an android device or emulator via
+adb.</em></p>
+<h2 id="what-is-frida">What is Frida?</h2>
+<p>Frida is a binary intrumentation toolkit, that lets you inject JS code or your own library
+into native apps on almost every possible platform (Window, MacOs, Linux, IOS, Android and QNX).
+Frida&rsquo;s core is written in C and has a fairly simple API for multiple languages such as Python, C, Swift, .NET, Node.js, Qml, etc..</p>
+<p><em>For more information look at the <a href="https://frida.re/">official website</a>.</em></p>
+<h2 id="installation">Installation</h2>
+<p>First of all if you don&rsquo;t have frida installed yet, go check this installation guide:</p>
+<p><a href="https://frida.re/docs/installation/">https://frida.re/docs/installation/</a></p>
+<p>Now let&rsquo;s install frida-server on our android device.</p>
+<h3 id="installing-frida-server">Installing frida-server</h3>
+<p>Download the latest frida-server from here: <a href="https://github.com/frida/frida/releases">https://github.com/frida/frida/releases</a>  <br>
+<strong>Note:</strong> <em>Make sure that you get a server that matches your device architecture.</em></p>
+<p>after extracting the archive, upload the server to the device via adb with the following command:</p>
+<pre><code>adb push frida-server /data/local/tmp
+</code></pre>
+<p>next we need to get a shell and get the server running.</p>
+<pre><code>adb shell
+su
+cd /data/local/tmp
+chmod +x frida-server
+./frida-server &amp;
+</code></pre>
+<h3 id="installing-the-crackme">Installing the crackme</h3>
+<p>Download the crackme from here:</p>
+<p><a href="https://github.com/OWASP/owasp-mstg/tree/master/Crackmes/Android/Level_01">https://github.com/OWASP/owasp-mstg/tree/master/Crackmes/Android/Level_01</a></p>
+<p>And install on the device:</p>
+<pre><code>adb install UnCrackable-Level1.apk
+</code></pre>
+<h2 id="lets-get-started">Let&rsquo;s Get Started</h2>
+<p>First, let&rsquo;s launch the app and see what it looks like.</p>
+<p><img src="/uncrackable1_root_alert.png" alt="root alert"></p>
+<p>Ok.. It seems like a  simple login page with a secret password,
+but inorder to enter an input we need somehow to bypass the root detection.</p>
+<p>Let&rsquo;s unpack and decompile the app and see what&rsquo;s going on.</p>
+<p>For unpacking we can use <code>dex2jar</code>:</p>
+<pre><code>d2j-dex2jar UnCrackable-Level1.apk
+</code></pre>
+<p>Now you should have a JAR file. Let&rsquo;s decompile and view it with <code>JD-GUI</code>.</p>
+<p><img src="/uncrackable1_jd.png" alt="decompiled source code"></p>
+<h3 id="bypassing-the-root-detection">Bypassing The Root Detection</h3>
+<p>As you can see in the image above, there is
+a function named onCreate that is incharge of the root detection.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Java" data-lang="Java"><span style="display:flex;"><span>  <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">onCreate</span><span style="color:#f92672">(</span>Bundle paramBundle<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>c<span style="color:#f92672">.</span><span style="color:#a6e22e">a</span><span style="color:#f92672">()</span> <span style="color:#f92672">||</span> c<span style="color:#f92672">.</span><span style="color:#a6e22e">b</span><span style="color:#f92672">()</span> <span style="color:#f92672">||</span> c<span style="color:#f92672">.</span><span style="color:#a6e22e">c</span><span style="color:#f92672">())</span>
+</span></span><span style="display:flex;"><span>      a<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Root detected!&#34;</span><span style="color:#f92672">);</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>b<span style="color:#f92672">.</span><span style="color:#a6e22e">a</span><span style="color:#f92672">(</span>getApplicationContext<span style="color:#f92672">()))</span>
+</span></span><span style="display:flex;"><span>      a<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;App is debuggable!&#34;</span><span style="color:#f92672">);</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">super</span><span style="color:#f92672">.</span><span style="color:#a6e22e">onCreate</span><span style="color:#f92672">(</span>paramBundle<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    setContentView<span style="color:#f92672">(</span>2130903040<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>Inorder to bypass it we need that all of the functions inside the if statement
+will return false.</p>
+<p>Let&rsquo;s take a look at their code.</p>
+<p><img src="/uncrackable1_root_detection.png" alt="root detection code"></p>
+<p>So we got three different checks:</p>
+<ul>
+<li>a: checks if <code>su</code> is in one of the directories of the <strong>PATH</strong> enviroment variable.</li>
+<li>b: checks if the kernel is signed with test-keys instead of release-keys.</li>
+<li>c: searchs for rooting apps.</li>
+</ul>
+<p>One way we can approach this is by using Frida to change the
+implementation of those functions in a way that they&rsquo;ll always return false.</p>
+<h4 id="how-to-modify-functions-with-frida">How to modify functions with frida</h4>
+<p>The first thing we should do is to check whether our process has Java VM running.
+for this we can use the boolean <code>Java.available</code>.
+It is also recommended to use <code>Java.perform(fn)</code> to ensure that the current thread is attached to the VM.</p>
+<p>The next thing is to get an instance of the functions class.<br>
+For this we can use <code>Java.use(className)</code>.</p>
+<p>Now that we have an access to the class we can use the <code>implementation</code> method on our function
+to replace the function implementation as we want.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Javascript" data-lang="Javascript"><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">Java</span>.<span style="color:#a6e22e">available</span>){ <span style="color:#75715e">//check if java VM is running.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">Java</span>.<span style="color:#a6e22e">perform</span>(()=&gt;{ <span style="color:#75715e">//ensure that the current thread attached to the VM.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">root_detection_cls</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Java</span>.<span style="color:#a6e22e">use</span>(<span style="color:#e6db74">&#39;sg.vantagepoint.a.c&#39;</span>); <span style="color:#75715e">//get the functions class
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">//replace the functions implementations
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#a6e22e">root_detection_cls</span>.<span style="color:#a6e22e">a</span>.<span style="color:#a6e22e">implementation</span> <span style="color:#f92672">=</span> () =&gt; {<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>}; 
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">root_detection_cls</span>.<span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">implementation</span> <span style="color:#f92672">=</span> () =&gt; {<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>};
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">root_detection_cls</span>.<span style="color:#a6e22e">c</span>.<span style="color:#a6e22e">implementation</span> <span style="color:#f92672">=</span> () =&gt; {<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>};
+</span></span><span style="display:flex;"><span>        });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    }<span style="color:#66d9ef">else</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Java VM is not running..&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p>And thats it. Now we just have to inject the script.<br>
+<em>For more information about frida&rsquo;s Java API look here: <a href="https://frida.re/docs/javascript-api/#java">https://frida.re/docs/javascript-api/#java</a></em></p>
+<hr>
+<h4 id="injecting-our-script">injecting our script</h4>
+<p>Before we start we need to get the application package name.
+frida comes with a useful tool that can help us with that.</p>
+<p>run the following command:</p>
+<pre><code>frida-ps -Uai
+</code></pre>
+<p><em>-U is for usb device, -a is for showing applications and -i
+is for showing all the installed applications.</em></p>
+<p><img src="/uncrackable1_frida-ps.png" alt="frida-ps"></p>
+<p>Now we inject our script.</p>
+<pre><code>frida -U -f owasp.mstg.uncrackable1 -l injector.js
+</code></pre>
+<p>You should see that our app has launched in suspended mode.
+enter the %resume command to resume the app.</p>
+<p><img src="/uncrackable1_passed_root.png" alt="passed_root"></p>
+<p>And.. we passed the root detection.</p>
+<h3 id="decrypt-the-password">Decrypt the password</h3>
+<p>Now that we passed the root detection we can interact with the app.
+The app asks for a &lsquo;Secret String&rsquo;, so let&rsquo;s look at the code and see
+how we can get it.</p>
+<p>If you look again at the MainActivity class you&rsquo;ll notice the following method, called verify.</p>
+<p><img src="/uncrackable1_verify.png" alt="verify_method"></p>
+<p>As you can see inorder to reach the <em>Success</em> message we need to get
+true from the method <em>a</em> in the <em>class a</em> (in the uncrackable1 package).</p>
+<p><img src="/uncrackable1_check_input.png" alt="check input"></p>
+<p>sv.vantagepoint.a.a.a:
+<img src="/uncrackable1_aes.png" alt="a method2"></p>
+<p>So we see that our input is compared with the secret key after
+its being decoded from base64 and then decrypted with AES-ECB using hardcoded key.</p>
+<p>Ok, so there are many ways to approach this. we can change the behavior of the <em>method a</em> to return always true so any input would work.
+We can put a hook on the function that decrypts the secret and print it, and so on..</p>
+<p>I think that it will be more interesting to show how we can use frida to change the flow of the app in such way that
+we call those methods by ourselves and decrypt the key before even inserting the input.</p>
+<p><strong>Solution:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Java" data-lang="Java"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&#39;</span>use strict<span style="color:#960050;background-color:#1e0010">&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>Java<span style="color:#f92672">.</span><span style="color:#a6e22e">available</span><span style="color:#f92672">){</span>
+</span></span><span style="display:flex;"><span>    Java<span style="color:#f92672">.</span><span style="color:#a6e22e">perform</span><span style="color:#f92672">(()=&gt;{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> check_root_class <span style="color:#f92672">=</span> Java<span style="color:#f92672">.</span><span style="color:#a6e22e">use</span><span style="color:#f92672">(</span><span style="color:#960050;background-color:#1e0010">&#39;</span>sg<span style="color:#f92672">.</span><span style="color:#a6e22e">vantagepoint</span><span style="color:#f92672">.</span><span style="color:#a6e22e">a</span><span style="color:#f92672">.</span><span style="color:#a6e22e">c</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//bypass root detection
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        check_root_class<span style="color:#f92672">.</span><span style="color:#a6e22e">a</span><span style="color:#f92672">.</span><span style="color:#a6e22e">implementation</span> <span style="color:#f92672">=</span> <span style="color:#f92672">()</span> <span style="color:#f92672">=&gt;{</span> <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;};</span>
+</span></span><span style="display:flex;"><span>        check_root_class<span style="color:#f92672">.</span><span style="color:#a6e22e">b</span><span style="color:#f92672">.</span><span style="color:#a6e22e">implementation</span> <span style="color:#f92672">=</span> <span style="color:#f92672">()</span> <span style="color:#f92672">=&gt;{</span> <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;};</span>
+</span></span><span style="display:flex;"><span>        check_root_class<span style="color:#f92672">.</span><span style="color:#a6e22e">c</span><span style="color:#f92672">.</span><span style="color:#a6e22e">implementation</span> <span style="color:#f92672">=</span> <span style="color:#f92672">()</span> <span style="color:#f92672">=&gt;{</span> <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;};</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">/*
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">            after bypassing the root check, the app ask for a secret string.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">            With quick static analysis we can see that the app stores an ecrypted string that was decrypt by using AES128-ECB
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">            and then decoded with base64.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">            The verify is checked by decrypt the secret string and compare it with our input.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">            To solve this we can use frida to call the decryption function and print the desired secret message.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        */</span>
+</span></span><span style="display:flex;"><span>		
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">//get the classes
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">const</span> serial_class <span style="color:#f92672">=</span> Java<span style="color:#f92672">.</span><span style="color:#a6e22e">use</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;sg.vantagepoint.uncrackable1.a&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> base64_class <span style="color:#f92672">=</span> Java<span style="color:#f92672">.</span><span style="color:#a6e22e">use</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;android.util.Base64&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> aes_class <span style="color:#f92672">=</span> Java<span style="color:#f92672">.</span><span style="color:#a6e22e">use</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;sg.vantagepoint.a.a&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        var hex_key <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;8d127684cbc37c17616d806cf50473cc&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        var enc_msg_b64 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;5UJiFctbmgbDoLXmpL12mkno8HT4Lv8dlat8FxR2GOc=&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        console<span style="color:#f92672">.</span><span style="color:#a6e22e">log</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;[+] decoding the encrypted secret: &#34;</span><span style="color:#f92672">+</span>enc_msg_b64<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        var enc_msg_bytes <span style="color:#f92672">=</span> base64_class<span style="color:#f92672">.</span><span style="color:#a6e22e">decode</span><span style="color:#f92672">(</span>enc_msg_b64<span style="color:#f92672">,</span>0<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#75715e">// console.log(&#34;    got: [&#34;+enc_msg_bytes+&#34;]&#34;);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>        console<span style="color:#f92672">.</span><span style="color:#a6e22e">log</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;[+] convert the key into bytearray: &#34;</span><span style="color:#f92672">+</span>hex_key<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        var bytes_key <span style="color:#f92672">=</span> serial_class<span style="color:#f92672">.</span><span style="color:#a6e22e">b</span><span style="color:#f92672">(</span>hex_key<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//console.log(&#34;    got: [&#34;+bytes_key+&#34;]&#34;);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>        console<span style="color:#f92672">.</span><span style="color:#a6e22e">log</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;[+] decrypting.&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        var secret <span style="color:#f92672">=</span> aes_class<span style="color:#f92672">.</span><span style="color:#a6e22e">a</span><span style="color:#f92672">(</span>bytes_key<span style="color:#f92672">,</span>enc_msg_bytes<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        console<span style="color:#f92672">.</span><span style="color:#a6e22e">log</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;[*] the secret is: &#34;</span> <span style="color:#f92672">+</span> String<span style="color:#f92672">.</span><span style="color:#a6e22e">fromCharCode</span><span style="color:#f92672">.</span><span style="color:#a6e22e">apply</span><span style="color:#f92672">(</span><span style="color:#66d9ef">null</span><span style="color:#f92672">,</span>secret<span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">});</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span><span style="color:#66d9ef">else</span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    console<span style="color:#f92672">.</span><span style="color:#a6e22e">log</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Java is not available.&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>Look how simple it is, We can get the class by using <code>Java.use</code> and then just
+calling its methods.</p>
+<p>Lets run this and see what happends.<br>
+run:</p>
+<pre><code>frida -U -f owasp.mstg.uncrackable1 -l solution.js --no-pause
+</code></pre>
+<p><img src="/uncrackable1_decrypted_key.png" alt="decrypted key"><br>
+We got it!</p>
+<p><strong>secret</strong>: <code>I want to believe</code></p>
+<p><img src="/uncrackable1_solved.png" alt="solved"></p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

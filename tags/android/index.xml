@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>android on My Research Blog</title>
+    <link>https://amitniz.github.io/tags/android/</link>
+    <description>Recent content in android on My Research Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 23 May 2022 18:23:20 +0300</lastBuildDate><atom:link href="https://amitniz.github.io/tags/android/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Hooking Android Applications With Frida</title>
+      <link>https://amitniz.github.io/posts/hooking_android_with_frida/</link>
+      <pubDate>Mon, 23 May 2022 18:23:20 +0300</pubDate>
+      
+      <guid>https://amitniz.github.io/posts/hooking_android_with_frida/</guid>
+      <description>Today I&amp;rsquo;m going to talk about a very powerful binary instrumentation toolkit named Frida,
+And use it to investigate and solve an android crackme app.
+Note: I&amp;rsquo;m going to assume that you already know how to connect to an android device or emulator via adb.
+What is Frida? Frida is a binary intrumentation toolkit, that lets you inject JS code or your own library into native apps on almost every possible platform (Window, MacOs, Linux, IOS, Android and QNX).</description>
+    </item>
+    
+  </channel>
+</rss>
