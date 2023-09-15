@@ -19,17 +19,6 @@ TUN devices (Tunnel) are layer 3 devices which means they live at the IP level. 
     </item>
     
     <item>
-      <title>The Researcher&#39;s Guide To Radare2</title>
-      <link>https://amitniz.github.io/posts/radare2_into/</link>
-      <pubDate>Thu, 28 Jul 2022 21:52:28 +0300</pubDate>
-      
-      <guid>https://amitniz.github.io/posts/radare2_into/</guid>
-      <description>In this article I&amp;rsquo;ll cover a powerful open-source tool called Radare2. Radare2 is notoriously known for its steep learning curve, but believe me once you&amp;rsquo;ll get a hang of it, il will become much more intuitive to use and unbelievebly useful.
-My goal is to help you overcome this first obstacle by cover the basic stuff.
-What is Radare //TODO: add photo of radares logo Radare2 is a powerful framework for reverse engineering.</description>
-    </item>
-    
-    <item>
       <title>Follina - RCE Exploit in msdt (CVE-2022-30190)</title>
       <link>https://amitniz.github.io/posts/follina/</link>
       <pubDate>Fri, 10 Jun 2022 13:47:10 +0300</pubDate>
