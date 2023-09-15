@@ -6,7 +6,34 @@
     <description>Recent content in Tags on My Research Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 23 May 2022 18:23:20 +0300</lastBuildDate><atom:link href="https://amitniz.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 15 Sep 2023 09:54:07 +0300</lastBuildDate><atom:link href="https://amitniz.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux networking series</title>
+      <link>https://amitniz.github.io/tags/linux-networking-series/</link>
+      <pubDate>Fri, 15 Sep 2023 09:54:07 +0300</pubDate>
+      
+      <guid>https://amitniz.github.io/tags/linux-networking-series/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>CVE</title>
+      <link>https://amitniz.github.io/tags/cve/</link>
+      <pubDate>Fri, 10 Jun 2022 13:47:10 +0300</pubDate>
+      
+      <guid>https://amitniz.github.io/tags/cve/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Maldocs</title>
+      <link>https://amitniz.github.io/tags/maldocs/</link>
+      <pubDate>Fri, 10 Jun 2022 13:47:10 +0300</pubDate>
+      
+      <guid>https://amitniz.github.io/tags/maldocs/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>android</title>
       <link>https://amitniz.github.io/tags/android/</link>
@@ -31,15 +58,6 @@
       <pubDate>Mon, 23 May 2022 18:23:20 +0300</pubDate>
       
       <guid>https://amitniz.github.io/tags/reverse_engineering/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Maldocs</title>
-      <link>https://amitniz.github.io/tags/maldocs/</link>
-      <pubDate>Sat, 21 May 2022 01:11:25 +0300</pubDate>
-      
-      <guid>https://amitniz.github.io/tags/maldocs/</guid>
       <description></description>
     </item>
     

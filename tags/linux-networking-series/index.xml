@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Linux networking series on My Research Blog</title>
+    <link>https://amitniz.github.io/tags/linux-networking-series/</link>
+    <description>Recent content in Linux networking series on My Research Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 15 Sep 2023 09:54:07 +0300</lastBuildDate><atom:link href="https://amitniz.github.io/tags/linux-networking-series/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>TUN/TAP devices in 5 Minute</title>
+      <link>https://amitniz.github.io/posts/understanding_tuntap/</link>
+      <pubDate>Fri, 15 Sep 2023 09:54:07 +0300</pubDate>
+      
+      <guid>https://amitniz.github.io/posts/understanding_tuntap/</guid>
+      <description>In UNIX systems TUN/TAP devices are a mechanism that allows to create a virtual, software based networking devices.
+TAP devices are layer 2 devices which means that they act as Ethernet devices. TAP devices are often used for virtualize network connection to VMs physical network.
+TUN devices (Tunnel) are layer 3 devices which means they live at the IP level. TUN devices are often used for routing IP packets and creating virtual point-to-point network connections, i.</description>
+    </item>
+    
+  </channel>
+</rss>

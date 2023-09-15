@@ -6,7 +6,40 @@
     <description>Recent content in Posts on My Research Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 23 May 2022 18:23:20 +0300</lastBuildDate><atom:link href="https://amitniz.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 15 Sep 2023 09:54:07 +0300</lastBuildDate><atom:link href="https://amitniz.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>TUN/TAP devices in 5 Minute</title>
+      <link>https://amitniz.github.io/posts/understanding_tuntap/</link>
+      <pubDate>Fri, 15 Sep 2023 09:54:07 +0300</pubDate>
+      
+      <guid>https://amitniz.github.io/posts/understanding_tuntap/</guid>
+      <description>In UNIX systems TUN/TAP devices are a mechanism that allows to create a virtual, software based networking devices.
+TAP devices are layer 2 devices which means that they act as Ethernet devices. TAP devices are often used for virtualize network connection to VMs physical network.
+TUN devices (Tunnel) are layer 3 devices which means they live at the IP level. TUN devices are often used for routing IP packets and creating virtual point-to-point network connections, i.</description>
+    </item>
+    
+    <item>
+      <title>The Researcher&#39;s Guide To Radare2</title>
+      <link>https://amitniz.github.io/posts/radare2_into/</link>
+      <pubDate>Thu, 28 Jul 2022 21:52:28 +0300</pubDate>
+      
+      <guid>https://amitniz.github.io/posts/radare2_into/</guid>
+      <description>In this article I&amp;rsquo;ll cover a powerful open-source tool called Radare2. Radare2 is notoriously known for its steep learning curve, but believe me once you&amp;rsquo;ll get a hang of it, il will become much more intuitive to use and unbelievebly useful.
+My goal is to help you overcome this first obstacle by cover the basic stuff.
+What is Radare //TODO: add photo of radares logo Radare2 is a powerful framework for reverse engineering.</description>
+    </item>
+    
+    <item>
+      <title>Follina - RCE Exploit in msdt (CVE-2022-30190)</title>
+      <link>https://amitniz.github.io/posts/follina/</link>
+      <pubDate>Fri, 10 Jun 2022 13:47:10 +0300</pubDate>
+      
+      <guid>https://amitniz.github.io/posts/follina/</guid>
+      <description>Last week a group of researchers at neo_sec came across an intersting maldoc that uses a remote HTTP template inorder to achieve RCE.
+original tweet:
+This malicious document loads a remote HTML temlpate and launch ms-msdt (Microsoft Diagnostic Tool) with special parameters that enable code execution. This method doesn&amp;rsquo;t requires enabling the content because it doesn&amp;rsquo;t relay on Macros. In addition this CVE is even allows code execution from preview view which makes it a 0Click exploit.</description>
+    </item>
+    
     <item>
       <title>Hooking Android Applications With Frida</title>
       <link>https://amitniz.github.io/posts/hooking_android_with_frida/</link>
@@ -20,7 +53,7 @@ What is Frida? Frida is a binary intrumentation toolkit, that lets you inject JS
     </item>
     
     <item>
-      <title>How Emotet Downloader Hide Its Payload</title>
+      <title>How Emotet Downloader Hides Its Payload</title>
       <link>https://amitniz.github.io/posts/investigating_emotet/</link>
       <pubDate>Sat, 21 May 2022 01:11:25 +0300</pubDate>
       
@@ -28,8 +61,7 @@ What is Frida? Frida is a binary intrumentation toolkit, that lets you inject JS
       <description>This week I came a cross a new version of Emotet. As I was trying to figure how the attack chain accures, I found this malicious excel document that is being used as a downloader of the sample.
 So I download the maldoc and run olevba to dump the macros, but nothing was found.
 Interesting.. Ok, Let&amp;rsquo;s find out what is going on.
-SHA1: 3fabbc9d0dbf064dbe1ca4ca8bed8324febc7ca9 
-Some Background Emotet is an advanced, self-propagating and modular Trojan That made its first appearance at 2014.</description>
+SHA1: 3fabbc9d0dbf064dbe1ca4ca8bed8324febc7ca9 Some Background Emotet is an advanced, self-propagating and modular Trojan That made its first appearance at 2014.</description>
     </item>
     
     <item>

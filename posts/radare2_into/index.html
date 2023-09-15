@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>The Researcher&#39;s Guide To Radare2 // My Research Blog</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.102.0-DEV" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Amit Nizri" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://amitniz.github.io/css/main.min.b433ed0ba7b8a622f56ff6d2ccbf163212b5c5012547f3c0a142c748dcbb5a97.css" />
+
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="The Researcher&#39;s Guide To Radare2"/>
+<meta name="twitter:description" content="In this article I&rsquo;ll cover a powerful open-source tool called Radare2. Radare2 is notoriously known for its steep learning curve, but believe me once you&rsquo;ll get a hang of it, il will become much more intuitive to use and unbelievebly useful.
+My goal is to help you overcome this first obstacle by cover the basic stuff.
+What is Radare //TODO: add photo of radares logo Radare2 is a powerful framework for reverse engineering."/>
+
+    <meta property="og:title" content="The Researcher&#39;s Guide To Radare2" />
+<meta property="og:description" content="In this article I&rsquo;ll cover a powerful open-source tool called Radare2. Radare2 is notoriously known for its steep learning curve, but believe me once you&rsquo;ll get a hang of it, il will become much more intuitive to use and unbelievebly useful.
+My goal is to help you overcome this first obstacle by cover the basic stuff.
+What is Radare //TODO: add photo of radares logo Radare2 is a powerful framework for reverse engineering." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://amitniz.github.io/posts/radare2_into/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-07-28T21:52:28+03:00" />
+<meta property="article:modified_time" content="2022-07-28T21:52:28+03:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://amitniz.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="Amit Nizri" /></a>
+      <h1>My Research Blog</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/about/">About</a>
+      </nav>
+      <p> Vulnerabilities • Malwares • Reverse Engineering • Linux • Networking</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/AmitNiz" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://twitter.com/amit_niz" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-twitter">
+  <title>Twitter</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+</svg>
+          </a>
+        
+          <a href="https://linkedin.com/in/amit-nizri/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">The Researcher&#39;s Guide To Radare2</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Jul 28, 2022
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          3 min read
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <p>In this article I&rsquo;ll cover a powerful open-source tool called Radare2.
+Radare2 is notoriously known for its steep learning curve, but believe me
+once you&rsquo;ll get a hang of it, il will become much more intuitive
+to use and unbelievebly useful.</p>
+<p>My goal is to help you overcome this first obstacle by cover
+the basic stuff.</p>
+<h2 id="what-is-radare">What is Radare</h2>
+<p>//TODO: add photo of radares logo
+Radare2 is a powerful framework for reverse engineering.
+It contains multiple tools but its main one is the radare2 tool.</p>
+<p>radare2 is a cross-platform commandline disassembler and debugger
+that comes with alot of great features.</p>
+<p>For more information about the framework and other features that are not
+being cover in this tutorial, visit: <a href="https://book.rada.re/">https://book.rada.re/</a></p>
+<h2 id="the-help-command">The Help Command</h2>
+<p>The most important thing to learn in radare is probably how to use the help command.
+Once you know the differents modules and how to use the help command you&rsquo;ll know how
+to feagure out how to do almost everything.</p>
+<p>in order to use the help command just type <code>?</code> and press Enter.
+//ADD a photo of <code>?</code></p>
+<p>Now lets say that you want to look at the import table.
+by looking at the various options of the help command you
+can see the commands that starts with &lsquo;i&rsquo; are for get information
+about the opened file. Great, That sounds like what we are looking for.
+by using &lsquo;i?&rsquo; we can see the various information commands.</p>
+<p>//add photo</p>
+<p>as you can see &lsquo;ii&rsquo; is used for get the imports.</p>
+<p>This is the power of the help command. As soon as you&rsquo;ll get to know the different modules you&rsquo;ll know where to look at and you&rsquo;ll never have to remember all the different commands or use cheatsheets.</p>
+<h2 id="basic-disassemby">Basic Disassemby</h2>
+<p>Let&rsquo;s have a quick overview on the most importants type of commands for
+reversing a binary.</p>
+<h3 id="analysis-commands">Analysis Commands</h3>
+<p>The analysis commnads are very important for the reversing process
+and are used for performing various analysis methods on the binary for
+extracting data of it.
+For example, after launching r2 it is useful to run the &lsquo;aaa&rsquo; command,
+which stands for analyze all + autoname
+functions.</p>
+<ul>
+<li>print all functions: <code>afl</code></li>
+</ul>
+<h3 id="info-commands">Info commands</h3>
+<p>The info commnads are commands that getting information about the binary such as imports, exports,
+architecture, various protections, etc..</p>
+<ul>
+<li>
+<p>print the binary info (such as arch,os, endianess, protections, etc..): <code>iI</code></p>
+</li>
+<li>
+<p>print the import table.<br>
+command: <code>il</code></p>
+</li>
+<li>
+<p>print strings.<br>
+command (data sections only): <code>iz</code>
+command (whole binary): <code>izz</code></p>
+</li>
+<li>
+<p>print symbols.<br>
+command: <code>is</code></p>
+</li>
+<li>
+<p>print sections.<br>
+command: <code>iS</code></p>
+</li>
+<li>
+<p>print segments.<br>
+command: <code>iSS</code></p>
+</li>
+</ul>
+<h3 id="seek-commands">Seek Commands</h3>
+<p>As you probably notice by now, when using
+radare there is an address next to the prompt.
+This address is your current position in the binary.
+By using the seek commands you can change your current position.</p>
+<ul>
+<li>seek to specific address.<br>
+command: <code>s [address]</code></li>
+</ul>
+<p>also, after analysis you can do things like
+<code>s main</code> inorder to seek to the function main.</p>
+<ul>
+<li>
+<p>seek to the beggining of the current function.<br>
+command: <code>sf.</code></p>
+</li>
+<li>
+<p>seek to register.<br>
+command: <code>sr [reg]</code></p>
+</li>
+<li>
+<p>undo seek.<br>
+command: <code>s-</code></p>
+</li>
+<li>
+<p>redo seek.<br>
+command: <code>s+</code></p>
+</li>
+</ul>
+<h3 id="print-commands">Print Commands</h3>
+<h2 id="basic-debugging">Basic Debugging</h2>
+<h2 id="visual-modes">Visual Modes</h2>
+<h2 id="radare2-scripting">Radare2 Scripting</h2>
+<h2 id="tips--tricks">Tips &amp; Tricks</h2>
+<ol>
+<li>~ for grep.</li>
+<li>~.. for less.</li>
+<li>-AA</li>
+<li>changing color schemes and save it.</li>
+<li>config file.</li>
+</ol>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>
