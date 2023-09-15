@@ -6,18 +6,7 @@
     <description>Recent content in Maldocs on My Research Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 10 Jun 2022 13:47:10 +0300</lastBuildDate><atom:link href="https://amitniz.github.io/tags/maldocs/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Follina - RCE Exploit in msdt (CVE-2022-30190)</title>
-      <link>https://amitniz.github.io/posts/follina/</link>
-      <pubDate>Fri, 10 Jun 2022 13:47:10 +0300</pubDate>
-      
-      <guid>https://amitniz.github.io/posts/follina/</guid>
-      <description>Last week a group of researchers at neo_sec came across an intersting maldoc that uses a remote HTTP template inorder to achieve RCE.
-original tweet:
-This malicious document loads a remote HTML temlpate and launch ms-msdt (Microsoft Diagnostic Tool) with special parameters that enable code execution. This method doesn&amp;rsquo;t requires enabling the content because it doesn&amp;rsquo;t relay on Macros. In addition this CVE is even allows code execution from preview view which makes it a 0Click exploit.</description>
-    </item>
-    
+    <lastBuildDate>Sat, 21 May 2022 01:11:25 +0300</lastBuildDate><atom:link href="https://amitniz.github.io/tags/maldocs/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>How Emotet Downloader Hides Its Payload</title>
       <link>https://amitniz.github.io/posts/investigating_emotet/</link>
